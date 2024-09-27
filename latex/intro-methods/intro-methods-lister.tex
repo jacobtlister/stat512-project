@@ -1,0 +1,420 @@
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+\documentclass[10pt]{article} % use larger type; default would be 10pt
+
+% Must always add the first 3 lines, no spacing between the first 2 comments
+
+\newcommand{\doctitle}   {Intro and Methods}
+\newcommand{\filetitle}  {\doctitle}
+\newcommand{\docdate}    {\today}
+\newcommand{\classnumber}{STAT 512}
+\newcommand{\classtitle} {Applied Regression Analysis}
+
+% packages used
+\usepackage[letterpaper, margin=1in]{geometry}
+\usepackage{booktabs}                % fixes tables https://www.tablesgenerator.com/latex_tables
+\usepackage{graphicx}                % support the \includegraphics command and options
+\usepackage{subcaption}              % for customizing the \caption command
+\usepackage{indentfirst}             % automatic indentation, comment out line that disables indents
+\usepackage{mathtools}               % math stuff
+\usepackage{amssymb}                 % math stuff
+\usepackage{gensymb}                 % extra symbols
+\usepackage{hyperref}                % allows clickable hypertext links in documents
+\usepackage{fancyhdr}                % for headers and footers
+\usepackage{minted}                  % good code blocks
+\usepackage{xcolor}                  % to access the named colour LightGray (for code blocks)
+\usepackage{pdflscape}               % for individual landscape pages
+\usepackage{titlesec}                % to customize spacing around section titles (too much by default)
+\usepackage{xargs}                   % for increased custom command functionality
+\usepackage{tikz}                    % for plots, graphs, etc.
+\usepackage{pgfplots}                % makes the plots
+\usepackage{verbatim}                % multi - line comments
+\usepackage{etoolbox}                % for conditional statements mostly (it has a ton of other stuff though)
+\usepackage{nicematrix}              % for highly customized tables and matrices
+\usepackage{multirow}                % for multirow function in tables (not default?)
+\usepackage{setspace}                % for double spacing
+\usepackage[backend=biber]{biblatex} % for citations
+\usepackage{physics}                 % for nice things
+
+%\addbibresource{bibi.bib} % import the bibliography file
+
+% adjusting hyperref options to my liking
+\hypersetup{
+    colorlinks=true,
+    breaklinks=true,
+    urlcolor=blue,
+    linkcolor=black,
+    filecolor=black,
+    citecolor=black,
+    menucolor=black,
+    urlbordercolor={1 1 1},
+    linkbordercolor={1 1 1},
+    filebordercolor={1 1 1},
+    citebordercolor={1 1 1},
+    menubordercolor={1 1 1},
+    bookmarksopen=true,
+    pdfpagemode=useOutlines,
+    pdftitle={\filetitle},
+    pdfauthor={Jacob Lister},
+}
+
+% to have arrows on both ends of the plot
+% https://tex.stackexchange.com/a/63998
+\usepackage{tkz-euclide}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\pgfplotsset{
+    every non boxed x axis/.append style={x axis line style=-},
+    every non boxed y axis/.append style={y axis line style=-}
+}
+
+\usepgfplotslibrary{fillbetween}
+
+% customizes section title whitespace
+\titlespacing*{\section}{0pt}{*1}{*1}
+\titlespacing*{\subsection}{0pt}{*0.5}{*0.5}
+\titlespacing*{\subsubsection}{0pt}{*0.5}{*0.5}
+
+% disables indents on new paragraphs (me no like indents in my papers)
+\setlength{\parindent}{0pt}
+
+% customization for code blocks
+\usemintedstyle{friendly}
+\definecolor{LightGray}{gray}{0.97} % for background of code blocks
+\setminted{bgcolor=LightGray}
+
+% makes spacing between these commands tighter
+\BeforeBeginEnvironment{minted}{\vspace{-4mm}}
+\AfterEndEnvironment{minted}{\vspace{-4mm}}
+\BeforeBeginEnvironment{align*}{\vspace{-4mm}}
+\AfterEndEnvironment{align*}{\vspace{-4mm}}
+\BeforeBeginEnvironment{flalign*}{\vspace{-4mm}}
+\AfterEndEnvironment{flalign*}{\vspace{-4mm}}
+
+\renewcommand{\headrulewidth}{0pt} % customize the layout...
+\pagestyle{fancy} % options: empty , plain , fancy
+
+% title stuff
+\title{\textbf{\doctitle}}
+\date{Jacob Lister} % note: /today gives current date
+\author{\classnumber \\ \textit{\classtitle}}
+
+% page header / footer stuff
+\lhead{Jacob Lister}
+\chead{\classnumber\text{ }\doctitle}
+\rhead{\thepage} % note: /thepage gives the page number
+\lfoot{}
+\cfoot{}
+\rfoot{}
+
+% parameters for the title page
+\setlength{\headheight}{39.7pt} % height of the title block
+\setlength{\headsep}{.25in}     % distance between the title block and top margin
+
+% spacing
+% don't know exactly what they do, but they affect the title
+% \setlength{\parskip}{1em}
+% \renewcommand{\baselinestretch}{1.5}
+
+% shortcuts for the different common number sets
+\newcommand{\nats}  {\mathbb{N}}
+\newcommand{\primes}{\mathbb{P}}
+\newcommand{\wholes}{\mathbb{W}}
+\newcommand{\ints}  {\mathbb{Z}}
+\newcommand{\rats}  {\mathbb{Q}}
+\newcommand{\reals} {\mathbb{R}}
+\newcommand{\comps} {\mathbb{C}}
+
+% inserts a horizontal line across the page (all except margins)
+\newcommand{\horline}{\noindent\hrulefill\vspace{-5mm}}
+
+% quick way to do plaintext in math mode
+\renewcommand{\t}[1]{\text{#1}}
+
+% shortcut for bold text in math mode
+\newcommand{\tbf}[1]{\textbf{#1}}
+
+% imaginary unit i (sqrt(-1)) with a little bit of altered spacing
+\renewcommand{\i}{{i\mkern1mu}}
+
+% shortcut for not equivalent
+\newcommand{\nequiv}{\not\equiv}
+
+% shortcut for modulo with space around it
+\newcommandx{\modulo}[2][1=,2=]{ \ifstrempty{#2}{}{\qty[#2]} \; \% \; #1}
+
+% even shorter shortcut for \qty
+\newcommand{\n}{\qty}
+
+% shortcut for long arrows with quad spaces around it
+\newcommand{\larrow} { \;\; \longleftarrow      \;\; }
+\newcommand{\rarrow} { \;\; \longrightarrow     \;\; }
+\newcommand{\lrarrow}{ \;\; \longleftrightarrow \;\; }
+\newcommand{\marrow} { \;\; \longmapsto         \;\; }
+
+%shortcut for plaintext units with spaces before them
+\newcommandx{\unit} [2][2=]   {\: \ifstrempty{#2}{\t{#1}}{\qty[\t{#1}]}}
+\newcommandx{\db}   [2][1=,2=]{\unit{dB#1}[#2]}
+\newcommandx{\hz}   [2][1=,2=]{\unit{#1Hz}[#2]}
+
+% shortcuts for displaystyle integrals and sums
+\newcommandx{\nsum}[2][1=,2=]{\displaystyle \sum ^{#2}_{#1}}
+\newcommandx{\nint}[2][1=,2=]{\displaystyle \int ^{#2}_{#1}}
+
+% shortcut for the spacing equal to an indent
+\newcommand{\spac}{\hspace{1.5em}}
+
+% shortcuts for floor and ceil functions
+% https://tex.stackexchange.com/a/118217
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+% shortcut for certain super and subscores
+\newcommand{\0}  {_{0} }
+\newcommand{\1}  {_{1} }
+\newcommand{\2}  {^{2} }
+\newcommand{\inv}{^{-1}}
+
+% shortcut for complex conjugate
+\newcommand{\conj}[1]{\overline{#1}}
+
+% shortcut for left implies arrow
+\newcommand{\limplies}{\Longleftarrow}
+
+% shortcut for a integration by parts table
+\newcommandx{\intbyparts}[5][5=\spac]{
+    \begin{figure}[h] #5
+        \begin{tabular}{lll}
+            $ u  = #1 $ & \quad\quad & $ dv = #2 $ \\
+            $ du = #3 $ & \quad\quad & $ v  = #4 $ \\
+        \end{tabular}
+    \end{figure}
+}
+
+% shortcut for inline code blocks
+\newcommandx{\code}[2][2=c]{\mintinline[bgcolor=]{#2}{#1}}
+
+% shortcut for limits
+\newcommand{\limit}[2]{\lim_{#1 \to #2}}
+
+% quick alpha and beta
+\renewcommand{\a}{\alpha}
+\renewcommand{\b}{\beta}
+
+% to do better use of epsilon and phi
+\makeatletter
+\let\oldepsilon\epsilon
+\def\epsilon{\@ifstar{\oldepsilon}{\varepsilon}}
+\makeatletter
+\let\oldphi\phi
+\def\phi{\@ifstar{\varphi}{\oldphi}}
+
+% command for quickly multiplying by 10 to some power
+\newcommand{\tten}[1]{\cdot 10^{#1}}
+
+% nice answer box
+\newcommand{\ans}[1]{\spac$\boxed{#1}$}
+
+% shortcut for divides and not divides using stuff from amssymb
+\newcommand{\divs}{\mid}
+\newcommand{\ndivs}{\nmid}
+
+% shortcut for cyclic group notation using something from physics
+\newcommand{\cyclic}[1]{\expval{#1}}
+
+% shortcut to get a more fitting name for the isomorphism symbol, \cong
+\newcommand{\iso}{\cong}
+
+% shortcut for making permutations (the algebraic object)
+% used the following TeX stack exchange answer as a guide:
+% https://tex.stackexchange.com/a/82262
+\makeatletter
+\newcommand{\perm}[2][]{
+    \def\tempa{}%
+    \@for\reserved:=#2\do{%
+        \edef\tempa{\tempa\ifx\tempa\empty\else #1\:\,\fi\reserved}%
+    }
+    \qty(\tempa)
+}
+\makeatother
+
+% holy shit i figured out how to make operators that operate in the same way
+% as the operators in the physics package (nice parentheses, square brackets, curly brackets)
+\DeclareMathOperator{\PrincipalLogarithm}{Log}
+\newcommand{\Log}{\trigbraces{\PrincipalLogarithm}}
+\DeclareMathOperator{\PrincipalArgument}{Arg}
+\newcommand{\Arg}{\trigbraces{\PrincipalArgument}}
+\DeclareMathOperator{\Sinc}{sinc}
+\newcommand{\sinc}{\trigbraces{\Sinc}}
+\DeclareMathOperator{\Prob}{P}
+\newcommand{\p}{\opbraces{\Prob}}
+\DeclareMathOperator{\QFunction}{Q}
+\newcommand{\q}{\trigbraces{\QFunction}}
+\newcommand{\qinv}{\trigbraces{\QFunction^{-1}}}
+\DeclareMathOperator{\ExpectedValue}{E}
+\newcommand{\e}{\opbraces{\ExpectedValue}}
+\DeclareMathOperator{\Variance}{VAR}
+\renewcommand{\var}{\opbraces{\Variance}}
+\DeclareDocumentCommand\Re{g}{\IfNoValueTF{#1}{\mathfrak{Re}}{\fbraces{\lbrace}{\rbrace}{\mathfrak{Re}}{#1}}}
+\DeclareDocumentCommand\Im{g}{\IfNoValueTF{#1}{\mathfrak{Im}}{\fbraces{\lbrace}{\rbrace}{\mathfrak{Im}}{#1}}}
+\DeclareMathOperator{\minimum}{min}
+\renewcommand{\min}{\opbraces{\minimum}}
+\newcommand{\fmin}[1]{\opbraces{\underset{#1}{\minimum}}}
+\DeclareMathOperator{\maximum}{max}
+\renewcommand{\max}{\opbraces{\maximum}}
+\newcommand{\fmax}[1]{\opbraces{\underset{#1}{\maximum}}}
+\DeclareMathOperator{\LeastCommonMultiple}{lcm}
+\newcommand{\lcm}{\opbraces{\LeastCommonMultiple}}
+\DeclareMathOperator{\GreatestCommonDivisor}{gcd}
+\renewcommand{\gcd}{\opbraces{\GreatestCommonDivisor}}
+\DeclareMathOperator{\Kernel}{ker}
+\renewcommand{\ker}{\opbraces{\Kernel}}
+\DeclareMathOperator{\AutomorphismSet}{Aut}
+\newcommand{\aut}{\opbraces{\AutomorphismSet}}
+\DeclareMathOperator{\InnerAutomorphismSet}{Inn}
+\newcommand{\inn}{\opbraces{\InnerAutomorphismSet}}
+
+% swap the definition of each type for \section* so that \section
+% does not have the number in front of the section text
+% and the starred version does
+\makeatletter
+\let\oldsection\section
+\def\section{\@ifstar{\oldsection}{\oldsection*}}
+\makeatother
+
+\makeatletter
+\let\oldssection\subsection
+\def\subsection{\@ifstar{\oldssection}{\oldssection*}}
+\makeatother
+
+\makeatletter
+\let\oldsssection\subsubsection
+\def\subsubsection{\@ifstar{\oldsssection}{\oldsssection*}}
+\makeatother
+% end of section * swapping
+
+% this removes numbering from sections
+% use alongside what is above to remove section numbering and keep
+% working hyperlinks in everything. source,
+% https://stackoverflow.com/a/38293753
+\makeatletter
+\renewcommand{\@seccntformat}[1]{}
+\makeatother
+
+% directory where images placed in document live
+\graphicspath{ {./figures/} }
+
+% this is so i can have captions under figures/inserts formatted how i want
+\DeclareCaptionLabelFormat{custom}{\textbf{#1 #2.}}
+\DeclareCaptionLabelSeparator{custom}{ }
+\captionsetup{labelformat=custom,labelsep=custom}
+\captionsetup[table]{justification=raggedright, singlelinecheck=off,labelformat=custom,labelsep=custom}
+
+% allows elements in matrices and vertically stretching an array.
+% combines ideas from the following links,
+% argument 1 (optional) is the array stretch amount (if needed, 1.5 usually suffices)
+% argument 2 (required) is the alignment of elements in the matrix
+% i would have made both optional but i could not figure out how to get it to work
+% https://texblog.net/latex-archive/uncategorized/matrix-align-left-right/
+% https://tex.stackexchange.com/a/14072
+% https://stackoverflow.com/a/1812224
+\makeatletter
+\renewcommand*\env@matrix[2][\arraystretch]{
+    \edef\arraystretch{#1}
+    \hskip -\arraycolsep
+    \let\@ifnextchar\new@ifnextchar
+    \array{*\c@MaxMatrixCols #2}}
+\makeatother
+
+% source link,
+% https://tex.stackexchange.com/a/453038
+% also did tinkering myself with the header shit to make it look how I want
+\fancypagestyle{mylandscape}{
+\fancyhf{} %Clears the header/footer
+\fancyfoot{% Footer
+\normalfont % fix the page stuff
+\makebox[-100cm][l]{% Right
+  \rlap{\hspace{-24pt}% Push out of margin by \footskip
+    \smash{% Remove vertical height
+      \raisebox{1cm}{% Raise vertically
+        \rotatebox{90}{Jacob Lister}}}}}
+\makebox[-100cm][l]{% Right
+  \rlap{\hspace{-26pt}% Push out of margin by \footskip
+    \smash{% Remove vertical height
+      \raisebox{4.22in}{% Raise vertically
+        \rotatebox{90}{\centering ECE 661 Project 1 Report}}}}}% Rotate counter-clockwise
+\makebox[\textwidth][l]{% Right
+  \rlap{\hspace{-23.6pt}% Push out of margin by \footskip
+    \smash{% Remove vertical height
+      \raisebox{24.424cm}{% Raise vertically
+        \rotatebox{90}{\thepage}}}}}}}
+\renewcommand{\headrulewidth}{0pt}% No header rule
+\renewcommand{\footrulewidth}{0pt}% No footer rule
+% end of good landscape
+
+% to remove numbering in table of contents, list of figures, and list of tables
+% source,
+% https://tex.stackexchange.com/a/218675
+\makeatletter
+\let\latexl@section\l@section
+\def\l@section#1#2{\begingroup\let\numberline\@gobble\latexl@section{#1}{#2}\endgroup}
+\makeatother
+
+\makeatletter
+\let\latexl@subsection\l@subsection
+\def\l@subsection#1#2{\begingroup\let\numberline\@gobble\latexl@subsection{#1}{#2}\endgroup}
+\makeatother
+
+\makeatletter
+\let\latexl@figure\l@figure
+\def\l@figure#1#2{\begingroup\let\numberline\@gobble\latexl@figure{#1}{#2}\endgroup}
+\makeatother
+% end remove numbering in table of contents, list of figures, and list of tables
+
+% renames contents in toc to table of contents
+\renewcommand{\contentsname}{Table of Contents}
+
+\begin{document}
+    % sets it so first page of actual content has page number 1 instead of 2
+    \thispagestyle{empty}
+    \setcounter{page}{0}
+    
+    \begin{titlepage}
+        \centering \fontsize{16pt}{20pt} \selectfont \vspace*{-40pt}
+        
+        \tbf{Purdue University Fort Wayne}
+        
+        \tbf{Department of Mathematical Sciences}
+        
+        \vspace*{-0.3cm}\par\noindent\rule{6.5in}{2pt}
+        
+        \fontsize{22pt}{26.4pt} \selectfont \vspace*{16pt}
+        
+        \tbf{\classnumber}
+        
+        \tbf{\classtitle} \vspace*{66pt}
+        
+        \tbf{\textit{Guassian Processes/Robot Arm Dynamics}} \vspace*{88pt}
+        
+        \fontsize{16pt}{20pt} \selectfont
+
+        \tbf{Project Component:} Intro and Methods
+        
+        \vspace*{132pt}
+        
+        \tbf{Name:} Jacob Lister
+        
+        \vspace*{176pt}
+        
+        \tbf{Date:} \docdate
+    \end{titlepage}
+    
+    \clearpage
+    \section{Hello World!}
+    
+    Hello world!
+    
+    \begin{align*}
+        &=
+    \end{align*}
+    
+\end{document}
