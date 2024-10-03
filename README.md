@@ -1,4 +1,4 @@
-# stat512
+# stat512-project
 
 ## Professor
 
@@ -14,6 +14,10 @@ Allessandro Selvitella
  - Class Project
  - Dataset used for the Project
  - Deliverables and Reports for the Project
+
+## Class Project Name
+
+Gaussian Processes/Robot Arm Dynamics
 
 ## Class Project Description
 
