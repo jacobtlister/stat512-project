@@ -2,7 +2,7 @@
 
 ## Professor
 
-Allessandro Selvitella
+Dr. Allessandro Selvitella
 
 ## Class and Year
 
