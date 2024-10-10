@@ -55,141 +55,127 @@ Fort Wayne, IN 46805, USA                          \\
 \newcommand{\fix}{\marginpar{FIX}}
 \newcommand{\new}{\marginpar{NEW}}
 
+% to allow hyphens to appear in the author names of those cited
+% https://latex.org/forum/viewtopic.php?t=3584#top
+% the post from phi detailed the solution i used
+% to insert a hyphen in the name of an author, instead
+% of typing a -, type \nobreakhyphen
+\makeatletter
+\newcommand*\nobreakhyphen{\hbox{-}\nobreak\hskip\z@skip}
+\makeatother
+
 \iclrfinalcopy % Uncomment for camera-ready version, but NOT for submission.
 \begin{document}
 
     \maketitle
 
     \begin{abstract}
-        abstract
+        In this work, I analyze the inverse dynamics model of a SARCOS seven joint robotic arm.
+        The technique that will be used to perform this analysis was Guassian Processes Regression,
+        as the functions that dictate the movement of robotic arms are complex and almost always
+        extremely non-linear. In addition, the Projected Processes approximation will be used due
+        to the large size of the dataset.
     \end{abstract}
 
     \section{Introduction}
+    
+    % change all tenses in this for analysis and results
+    % also expand on the results of the analysis for the analysis and results section
 
-    intro
+    In this section, I provide an overview of the inverse dynamics problem, a brief description
+    of kinematics, and a brief explanation of the analysis that will be performed.
     
-    \subsection{Problem Overview}
+    Inverse dynamics is used when working to model joint movement, often of a robotic arm or
+    the arms and legs of an animal or person. This technique is used to determine the torque
+    being applied to the joints in a system based on the position, velocity, and accelation of
+    a body (or end effector in the case of a robotic arm). Using inverse dynamics, you can
+    compute the torques needed to follow a certain trajectory, which provides the ability to
+    simulate biological models or allows robotic arms to "plan" the path they will take when
+    moving from one position to another.
     
-    talk about inverse dynamics for robot arms problem statement
+    The specific system I am looking at is that of a SARCOS robotic arm. This arm has 7 joints,
+    which means 7 torques to find. Additionally, this means that there are 7 positions, velocities,
+    and accelerations as outputs. Because we are working with inverse dynamics, the positions,
+    velocities, and accelerations will be used as inputs, and the torques will be used as outputs.
+    This means I will be creating a mapping of 21 inputs of 7 outputs.
     
-    \subsection{Kinematics Overview}
+    Inverse dynamics can be performed in a variety of ways. The most straight-forward way is to
+    analytically compute the torque functions of each joint in the system. This method requires
+    full knowledge of the system and often becomes extremely complicated for many-jointed
+    systems, so this method cannot always be used. There are also methods of estimating the
+    torques using statistical methods. Due to the fact that the composition of torque functions
+    is of trigonometric functions mainly, these functions end up being highly non-linear. To see
+    more information about how the torque functions are composed, see Appendix A (will be
+    implemented in final report). Due to the non-linearity of the torques, simple statistic
+    methods such as linear regression are expected to perform poorly. Guassian Processes
+    Regression is a more robust statistical method and will be the focus of this manuscript.
+    Guassian Processes Regression will be used to model the torques of the SARCOS arm given the 21
+    inputs.
     
-    robot movement is highly nonlinear (explain kinematics a bit)
+    I chose to work on this project with the interest of learning about a method through
+    the inverse dynamics of a robotic arm can be modeled non-analytically. As I have taken an
+    undergraduate robotics course, and am currently taking a graduate level robotics course, I
+    have worked with forward kinematics and a small amount of inverse dynamics. The inverse
+    dynamics I have worked with has been solely analytic, working out each torque value in a system
+    by hand. I have been curious about learning about non-analytic methods for a while now, and
+    this was the perfect oppurtunity to do so.
+    
+    The remaining part of this manuscript is organized as follows. Section 2 is dedicated to the
+    methods that will be used.
     
     \section{Methods}
     
-    In this section, I describe the data source, Guassian Processes Regression (GPR) which I am
-    considering, Projected Processes (PP) Approximation, and provide a summary of my analysis.
+    In this section, I describe the data source, Guassian Processes Regression (GPR), and
+    Projected Processes (PP) Approximation.
     
     \subsection{Data Source and Software}
     
-    The SARCOS dataset was taken from the website for the textbook 
+    The SARCOS dataset was sourced from the website for the textbook 
     \textit{Gaussian Processes for Machine Learning} \citet{sarcos}. The analysis will be performed
     using the software Python 3.10 and the packages \texttt{numpy} and \texttt{scipy}. The dataset
     is publicly available and the code will be publicly available in a Github Repository
     \citep{github}.
     
-    \subsection{Guassian Processes Regression (GPR)}
+    \subsection{Guassian Processes Regression}
     
-    gaussian process regression
+    To estimate the torque functions of the SARCOS arm, I will use a Guassian Processes Regression
+    (GPR). GPR is a technique used in machine learning and more broadly in statistics. It is often
+    used a supervised learning learning technique when working with non-linear systems. Because
+    Guassian Processes (GPs) can interpreted as a distribution over a function space \citep{gpml},
+    we can use them to create a more robust method of regression. There are some additional
+    advantages to working with guassian processes \citep{scikit-gp}, some of which are detailed
+    below:
+    
+    \begin{itemize}
+        \item The prediction is probabilistic (Gaussian) so that one can compute empirical confidence intervals and decide based on those if one should refit (online fitting, adaptive fitting) the prediction in some region of interest.
+        \item Versatile: different kernels can be specified. Common kernels are provided, but it is also possible to specify custom kernels.
+    \end{itemize}
+    
+    This versatility helps GPR work well in non-linear systems. There are some downsides to GPR,
+    one being the fact that it uses all samples provided to perform its prediction, so the
+    computational complexity becomes difficult to manage with large datasets; additionally, GPR
+    loses efficiency in higher dimensional spaces \citep{scikit-gp}, but this should not be an
+    issue as I am working with a dataset with a relatively small amount of dimensions. Because of
+    the fact that the dataset I am working with is large, having over 40,000 samples, an
+    approximation method for GPR will be used, which is detailed in the next subsection.
     
     \subsection{Projected Processes Approximation}
     
-    Use the Project Processes (PP) methods due to combination of high performance and lower
-    time complexity. Has performance very similar to ST and BCM methods
+    The approximation method for GPR I will be using is the Projected Processes (PP) Approximation.
+    This approximation method only uses a subset of the dataset to predict the function of the
+    system by "absorbing" the information of the entire dataset into the subset \citep{gpml}.
     
-    cite table 8.1 for methods section when talking about time comparison for SR and PP methods
-
-    \section{Citations, figures, tables, references}
-
-    These instructions apply to everyone, regardless of the formatter being used.
-
-    \subsection{Citations within the text}
-
-    Citations within the text should be based on the \texttt{natbib} package
-    and include the authors' last names and year (with the ``et~al.'' construct
-    for more than two authors). When the authors or the publication are
-    included in the sentence, the citation should not be in parenthesis using \verb|\citet{}| (as
-    in ``See \citet{Hinton06} for more information.''). Otherwise, the citation
-    should be in parenthesis using \verb|\citep{}| (as in ``Deep learning shows promise to make progress
-    towards AI~\citep{Bengio+chapter2007}.'').
-
-    The corresponding references are to be listed in alphabetical order of
-    authors, in the \textsc{References} section. As to the format of the
-    references themselves, any style is acceptable as long as it is used
-    consistently.
-
-    \subsection{Figures}
-
-    All artwork must be neat, clean, and legible. Lines should be dark
-    enough for purposes of reproduction; art work should not be
-    hand-drawn. The figure number and caption always appear after the
-    figure. Place one line space before the figure caption, and one line
-    space after the figure. The figure caption is lower case (except for
-    first word and proper nouns); figures are numbered consecutively.
-
-    Make sure the figure caption does not get separated from the figure.
-    Leave sufficient space to avoid splitting the figure and figure caption.
-
-    You may use color figures.
-    However, it is best for the
-    figure captions and the paper body to make sense if the paper is printed
-    either in black/white or in color.
+    This method was chosen over the other approximation methods provided in the book for a number
+    of reasons. This method was chosen over the Subset of Regressors Method due to PP's higher
+    performance and the Bayesian Committee Machine Method was not chosen due to it's higher
+    computational complexity for similar performance. The last method that was not chosen was the
+    Subset of Dataset method, and while it does have the same computational complexity and similar
+    performance as PP \citep{gpml}, it is based on a degenerate GP, so to maximize performance in
+    predicting the torques, I chose PP over it. Overall, the Projected Processes Approximation
+    provided a strong middle ground of the different approximation methods, leading to it being
+    chosen.
     
-    \begin{figure}[h]
-    \begin{center}
-        %\framebox[4.0in]{$\;$}
-        \fbox{\rule[-.5cm]{0cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
-    \end{center}
-        \caption{Sample figure caption.}
-    \end{figure}
-
-    \subsection{Tables}
-
-    All tables must be centered, neat, clean and legible. Do not use hand-drawn
-    tables. The table number and title always appear before the table. See
-    Table~\ref{sample-table}.
-
-    Place one line space before the table title, one line space after the table
-    title, and one line space after the table. The table title must be lower case
-    (except for first word and proper nouns); tables are numbered consecutively.
-
-    \begin{table}[t]
-        \caption{Sample table title}
-        \label{sample-table}
-    \begin{center}
-    \begin{tabular}{ll}
-        \multicolumn{1}{c}{\bf PART}  &\multicolumn{1}{c}{\bf DESCRIPTION}
-        \\ \hline \\
-        Dendrite         &Input terminal \\
-        Axon             &Output terminal \\
-        Soma             &Cell body (contains cell nucleus) \\
-    \end{tabular}
-    \end{center}
-    \end{table}
-
-\subsection{Margins in LaTeX}
-
-Most of the margin problems come from figures positioned by hand using
-\verb+\special+ or other commands. We suggest using the command
-\verb+\includegraphics+
-from the graphicx package. Always specify the figure width as a multiple of
-the line width as in the example below using .eps graphics
-\begin{verbatim}
-   \usepackage[dvips]{graphicx} ...
-   \includegraphics[width=0.8\linewidth]{myfile.eps}
-\end{verbatim}
-or % Apr 2009 addition
-\begin{verbatim}
-   \usepackage[pdftex]{graphicx} ...
-   \includegraphics[width=0.8\linewidth]{myfile.pdf}
-\end{verbatim}
-for .pdf graphics.
-See section~4.4 in the graphics bundle documentation (\url{http://www.ctan.org/tex-archive/macros/latex/required/graphics/grfguide.ps})
-
-A number of width problems arise when LaTeX cannot properly hyphenate a
-line. Please give LaTeX hyphenation hints using the \verb+\-+ command.
-
+    \clearpage
     \bibliography{intro-methods}
     \bibliographystyle{iclr2025_conference}
 
