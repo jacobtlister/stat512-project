@@ -23,6 +23,10 @@ models = models.models;
 losses = {};
 
 for i = 1 : 7
+    disp(models{i})
+end
+
+for i = 1 : 7
     losses{i} = loss(models{i}, x_te, y_te(:, i));
 end
 
