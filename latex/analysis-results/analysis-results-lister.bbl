@@ -1,0 +1,43 @@
+\begin{thebibliography}{6}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[fic()]{fic_matlab}
+Fully independent conditional approximation for gpr models.
+\newblock URL
+  \url{https://www.mathworks.com/help/stats/fully-independent-conditional-approximation-for-gpr-models.html}.
+
+\bibitem[Lister()]{github}
+Jacob Lister.
+\newblock URL \url{https://github.com/jacobtlister/stat512-project}.
+
+\bibitem[Qui{{\~n}}onero-Candela \& Rasmussen(2005)Qui{{\~n}}onero-Candela and
+  Rasmussen]{fic}
+Joaquin Qui{{\~n}}onero-Candela and Carl~Edward Rasmussen.
+\newblock A unifying view of sparse approximate gaussian process regression.
+\newblock \emph{Journal of Machine Learning Research}, 6\penalty0
+  (65):\penalty0 1939--1959, 2005.
+\newblock URL \url{http://jmlr.org/papers/v6/quinonero-candela05a.html}.
+
+\bibitem[Rasmussen \& Williams(2006{\natexlab{a}})Rasmussen and Williams]{gpml}
+Carl Rasmussen and Christopher Williams.
+\newblock \emph{Guassian Processes for Machine Learning}.
+\newblock MIT Press, 2006{\natexlab{a}}.
+\newblock URL \url{https://gaussianprocess.org/gpml/}.
+
+\bibitem[Rasmussen \& Williams(2006{\natexlab{b}})Rasmussen and
+  Williams]{sarcos}
+Carl Rasmussen and Christopher Williams.
+\newblock Guassian processes for machine learning - data, 2006{\natexlab{b}}.
+\newblock URL \url{https://gaussianprocess.org/gpml/data/}.
+
+\bibitem[scikit\nobreakhyphen learn()]{scikit-gp}
+scikit\nobreakhyphen learn.
+\newblock 1.7. guassian processes.
+\newblock URL
+  \url{https://scikit-learn.org/stable/modules/gaussian_process.html}.
+
+\end{thebibliography}

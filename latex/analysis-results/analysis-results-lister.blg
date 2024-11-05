@@ -1,0 +1,51 @@
+This is BibTeX, Version 0.99d (TeX Live 2022/dev/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: analysis-results-lister.aux
+The style file: iclr2025_conference.bst
+Database file #1: analysis-results.bib
+Warning--to sort, need author or key in fic_matlab
+Warning--empty year in fic_matlab
+Warning--empty year in github
+Warning--empty year in scikit-gp
+You've used 6 entries,
+            2773 wiz_defined-function locations,
+            623 strings with 5706 characters,
+and the built_in function-call counts, 2078 in all, are:
+= -- 182
+> -- 83
+< -- 5
++ -- 31
+- -- 24
+* -- 144
+:= -- 301
+add.period$ -- 18
+call.type$ -- 6
+change.case$ -- 24
+chr.to.int$ -- 5
+cite$ -- 17
+duplicate$ -- 100
+empty$ -- 206
+format.name$ -- 35
+if$ -- 442
+int.to.chr$ -- 2
+int.to.str$ -- 1
+missing$ -- 3
+newline$ -- 38
+num.names$ -- 20
+pop$ -- 68
+preamble$ -- 1
+purify$ -- 20
+quote$ -- 0
+skip$ -- 91
+stack$ -- 0
+substring$ -- 44
+swap$ -- 8
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 61
+warning$ -- 4
+while$ -- 17
+width$ -- 0
+write$ -- 77
+(There were 4 warnings)

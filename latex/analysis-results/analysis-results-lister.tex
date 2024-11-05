@@ -1,0 +1,393 @@
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+\documentclass{article}
+
+\newcommand{\filetitle}{analysis-results-lister}
+
+% packages used
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{iclr2025_conference,times}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{natbib}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+
+% directory where images placed in document live
+\graphicspath{ {./figures/} }
+
+% adjusting hyperref options to my liking
+\hypersetup{
+    colorlinks=true,
+    breaklinks=true,
+    urlcolor=blue,
+    linkcolor=black,
+    filecolor=black,
+    citecolor=black,
+    menucolor=black,
+    urlbordercolor={1 1 1},
+    linkbordercolor={1 1 1},
+    filebordercolor={1 1 1},
+    citebordercolor={1 1 1},
+    menubordercolor={1 1 1},
+    bookmarksopen=true,
+    pdfpagemode=useOutlines,
+    pdftitle={\filetitle},
+    pdfauthor={Jacob Lister},
+}
+
+% Optional math commands from https://github.com/goodfeli/dlbook_notation.
+\input{math_commands.tex}
+
+% a shortcut for a spaced out vertical bar
+\newcommand{\vbar}{\hspace{-0.4mm} \mathrel{|} \hspace{-0.4mm}}
+
+\title{Gaussian Processes/Robot Arm Dynamics \\ Introduction and Methods}
+
+\author {Jacob Lister                              \\
+Department of Electrical and Computer Engineerning \\
+Department of Mathematical Sciences                \\
+Purdue University Fort Wayne                       \\
+Fort Wayne, IN 46805, USA                          \\
+\texttt{aldrjt01@pfw.edu}
+}
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+
+% to allow hyphens to appear in the author names of those cited
+% https://latex.org/forum/viewtopic.php?t=3584#top
+% the post from phi detailed the solution i used
+% to insert a hyphen in the name of an author, instead
+% of typing a -, type \nobreakhyphen
+\makeatletter
+\newcommand*\nobreakhyphen{\hbox{-}\nobreak\hskip\z@skip}
+\makeatother
+
+\iclrfinalcopy % Uncomment for camera-ready version, but NOT for submission.
+\begin{document}
+
+    \maketitle
+
+    \begin{abstract}
+        In this work, I analyze the inverse dynamics model of a SARCOS seven joint robotic arm.
+        The technique that was used to perform this analysis was Guassian Processes Regression,
+        as the functions that dictate the movement of robotic arms are complex and almost always
+        non-linear. In addition, the Fully Independent Conditional Approximation will be used
+        due to the large size of the dataset.
+    \end{abstract}
+
+    \section{Introduction}
+    
+    % change all tenses in this for analysis and results
+    % also expand on the results of the analysis for the analysis and results section
+
+    In this section, I provide an overview of the inverse dynamics problem, a brief description
+    of kinematics, and a brief explanation of the analysis that was performed.
+    
+    Inverse dynamics is used when working to model joint movement, often of a robotic arm or
+    the arms and legs of an animal or person. This technique is used to determine the torque
+    being applied to the joints in a system based on the position, velocity, and accelation of
+    a body (or end effector in the case of a robotic arm). Using inverse dynamics, you can
+    compute the torques needed to follow a certain trajectory, which provides the ability to
+    simulate biological models or allows robotic arms to "plan" the path they will take when
+    moving from one position to another.
+    
+    The specific system I am looking at is that of a SARCOS robotic arm. This arm has 7 joints,
+    which means 7 torques to find. Additionally, this means that there are 7 positions, velocities,
+    and accelerations as outputs. Because I was working with inverse dynamics, the positions,
+    velocities, and accelerations will be used as inputs, and the torques will be used as outputs.
+    This means I will be creating a mapping of 21 inputs of 7 outputs.
+    
+    Inverse dynamics can be performed in a variety of ways. The most straight-forward way is to
+    analytically compute the torque functions of each joint in the system. This method requires
+    full knowledge of the system and often becomes extremely complicated for many-jointed
+    systems, so this method cannot always be used. There are also methods of estimating the
+    torques using statistical methods. Due to the fact that the composition of torque functions
+    is of trigonometric functions mainly, these functions end up being highly non-linear. To see
+    more information about how the torque functions are composed, see the
+    \textbf{\hyperref[sec:appendix]{Appendix}}. Due to the non-linearity of the torques, simple
+    statistic methods such as linear regression are expected to perform poorly. Guassian Processes
+    Regression is a more robust statistical method and will be the focus of this manuscript.
+    Guassian Processes Regression was used to model the torques of the SARCOS arm given the 21
+    inputs.
+    
+    I chose to work on this project with the interest of learning about a method through
+    the inverse dynamics of a robotic arm can be modeled non-analytically. As I have taken an
+    undergraduate robotics course, and am currently taking a graduate level robotics course, I
+    have worked with forward kinematics and a small amount of inverse dynamics. The inverse
+    dynamics I have worked with has been solely analytic, working out each torque value in a system
+    by hand. I have been curious about learning about non-analytic methods for a while now, and
+    this was the perfect oppurtunity to do so.
+    
+    The remaining part of this manuscript is organized as follows. Section 2 is dedicated to the
+    methods that were used, Section 3 to my results and a discussion, and in Section 4 I will
+    draw conclusions.
+    
+    \clearpage
+    
+    \section{Methods}
+    
+    In this section, I describe the data source, Guassian Processes Regression (GPR), and the
+    Fully Independent Conditional Approximation.
+    
+    \subsection{Data Source and Software}
+    
+    The SARCOS dataset was sourced from the website for the textbook 
+    \textit{Gaussian Processes for Machine Learning} \citet{sarcos}. The analysis was performed
+    using the software MATLAB R2023A and the \texttt{Statistics and Machine Learning Toolbox}. I
+    switched from Python to MATLAB dues to MATLAB's strong documentation and implmentation of
+    GPR being already present, alongside the fact that I am more comfortable with MATLAB than
+    Python. The dataset is publicly available and the code will be publicly available in a Github
+    Repository \citep{github}.
+    
+    \subsection{Guassian Processes Regression}
+    
+    To estimate the torque functions of the SARCOS arm, I will use a Guassian Processes Regression
+    (GPR). GPR is a technique used in machine learning and more broadly in statistics. It is often
+    used a supervised learning learning technique when working with non-linear systems. Because
+    Guassian Processes (GPs) can interpreted as a distribution over a function space \citep{gpml},
+    we can use them to create a more robust method of regression. There are some additional
+    advantages to working with guassian processes \citep{scikit-gp}, some of which are detailed
+    below:
+    
+    \begin{itemize}
+        \item The prediction is probabilistic (Gaussian) so that one can compute empirical confidence intervals and decide based on those if one should refit (online fitting, adaptive fitting) the prediction in some region of interest.
+        \item Versatile: different kernels can be specified. Common kernels are provided, but it is also possible to specify custom kernels.
+    \end{itemize}
+    
+    This versatility helps GPR work well in non-linear systems. There are some downsides to GPR,
+    one being the fact that it uses all samples provided to perform its prediction, so the
+    computational complexity becomes difficult to manage with large datasets; additionally, GPR
+    loses efficiency in higher dimensional spaces \citep{scikit-gp}, but this should not be an
+    issue as I am working with a dataset with a relatively small amount of dimensions. Because of
+    the fact that the dataset I am working with is large, having over 40,000 samples, an
+    approximation method for GPR will be used, which is detailed in the next subsection.
+    
+    Now for an in-depth explanation of GPR. If we interpret a GP as being a distribution over
+    a function space, we can write it as:
+    
+    \begin{align*}
+        f(\textbf{x})                             &\sim \mathcal{GP}(m(\textbf{x}), k(\textbf{x}, \textbf{x}')) \\
+        \mathbb{E}[f(\textbf{x})]                 &= m(\textbf{x})                                           \\
+        \text{cov}[f(\textbf{x}), f(\textbf{x}')] &= k(\textbf{x}, \textbf{x}')
+    \end{align*}
+    
+    where $\textbf{x}$, $\textbf{x}'$ are 2 points chosen from the set of possible inputs. Then,
+    if we have a number of input points $X_{*}$, we can generate a random Guassian vector
+    $\textbf{f}_{*} = f(\textbf{x}_{*}) \sim \mathcal{N}(0, K(X_{*}, X_{*}))$, where $K$ is the
+    covariances matrix between the different inputs. This becomes the prior for the function
+    we are trying to approximate. If we take into account noise and condition the prior on the
+    observations (training data), we have \citep{gpml}:
+    
+    \begin{align*}
+        \textbf{f}_{*} \vbar X_{*}, X, \textbf{f} \sim \mathcal{N}(K(X_{*}, X)K(X, X)^{-1} \textbf{f}, K(X_{*}, X_{*}) - K(X_{*}, X)K(X, X)^{-1} K(X, X_{*}))
+    \end{align*}
+    
+    This means that by evaluating the mean and covariance matrices above, the function values
+    $\textbf{f}_{*}$ corresponding to the inputs $X_{*}$ can be sampled from the posterior
+    distribution to estimate $f(\textbf(x))$ \citep{gpml}. This provides the main basis for GPR.
+    
+    \subsection{Fully Independent Conditional Approximation}
+    
+    I was originally planning to use Projected Processes as my approximation method, but ended up
+    changing to Fully Independent Conditional Approximation. This is due to a mix of personal
+    and school stuff happening reducting the amount of time I had to work on this, and the fact
+    the Fully Independent Conditional Approximation was built into MATLAB, which reduced the amount
+    of time I had to work on this.
+    
+    The approximation method for GPR I used was the Fully Independent Conditional (FIC)
+    Approximation. This approximation method modfies the Subset of Regressors method detailed
+    in \citep{gpml} in a way that avoids the degeneracy problem as in the Subset of Regressors
+    method, so it is operating on a GP still. In FIC, only a subset of the full dataset is used,
+    and depending on the data being inputted into the kernel, it may either be approximated or
+    calculated exactly. The kernel for the FIC approximation is shown below \citep{fic}:
+    
+    \begin{align*}
+        \widehat{k}_{\text{FIC}}(x_{i}, x_{j} \vbar \theta, A) = (1 - \delta_{ij})\widehat{k}_{\text{SR}}(x_{i}, x_{j} \vbar \theta, A) + \delta_{ij} k(x_{i}, x_{j} \vbar \theta, A)
+    \end{align*}
+    
+    As seen above, the kernel is approximated when the $i \neq j$, which is equivalent to the
+    Subset of Regressors method, and calculated exactly when $i = j$. The FIC
+    approximation of the $K(X, X \vbar \theta, A)$ matrix is given as \citep{fic_matlab}:
+    
+    \begin{align*}
+        \widehat{K}_{\text{FIC}}(X, X  \vbar \theta, A) = \widehat{K}_{\text{SR}}(X, X  \vbar \theta, A) + \delta_{ij}(k(x_{i}, x_{j} \vbar \theta, A)) 
+    \end{align*}
+    
+    This method was chosen over the other approximation methods for a number
+    of reasons (besides what I mentioned at the beginning of this section).
+    This method was chosen over the Subset of Regressors Method due to FIC being a direct
+    improvement to Subset of Regressors, as it has the same computational complexity as the Subset
+    of Regressors while fixing the issue with the degeneracy of the covariance matrix \citep{fic}.
+    The Projected Processes Approximation was not used due to reasons mentioned earlier, and the
+    Bayesian Committee Machine Method was not chosen due to it's higher computational complexity
+    for similar performance. The last method that was not chosen was the Subset of Dataset method,
+    and while it does have the same computational complexity, it is based on a degenerate GP, so I
+    chose FIC over it for the same reasons as Subset of Regressors. Overall, the FIC Approximation
+    provided a strong middle ground of the different approximation methods, leading to it being
+    chosen.
+    
+    \section{Analysis and Results}
+    
+    In this discussion I discuss the results of my analysis. In \textbf{\autoref{table:table1}},
+    the loss of each predicted torque function is given.
+    
+    \begin{table}[h] \centering
+        \caption{\centering Table detailing the MSE for each torque variable (denoted $q_{i}$) estimated,
+        kernel function for each variable, and basis function for each variable.}
+        \vspace*{1mm}
+        \begin{tabular}{cccc}
+            \midrule
+            \midrule
+            $i$ & MSE for predicted $q_{i}$ & Kernel function for $q_{i}$ & Basis function for $q_{i}$ \\
+            \midrule
+            1   & 12.7200                   & Rational Quadratic          & Pure Quadratic             \\
+            2   &  5.0697                   & Matern52                    & Constant                   \\
+            3   &  1.3051                   & Matern52                    & Linear                     \\
+            4   &  0.8692                   & Matern32                    & Quadratic                  \\
+            5   &  0.0271                   & Exponential                 & None                       \\
+            6   &  0.3276                   & Rational Quadratic          & Pure Quadratic             \\
+            7   &  0.0962                   & Rational Quadratic          & Pure Quadratic             \\
+            \midrule
+            \midrule
+        \end{tabular}
+        \label{table:table1}
+    \end{table}
+    
+    Overall, as the model progressed through the joint torques the MSE substantially decreased.
+    This could possibly be due to the fact that earlier joints in the system (assuming earlier
+    indexed joint variables are closer to the base as is standard) have a more dramatic effect
+    on the location of the end effector, as small changes in $q_{1}$ or $q_{2}$ could cause large
+    changes in the position, velocity, and acceleration of the arm, especially if the arm is
+    large. The extremely low MSE for the later joints indicates that GPR performed well in terms
+    of predicting their respective torque functions. It is possible that if I were to spend more
+    time fine-tuning the optimization of the hyperparemeters or defined custom kernel functions
+    that I could have achieved better performance on the earlier joint torques. Overall, the GPR
+    seems to be able to well predict the torque variables for the SARCOS robotic arm.
+    
+    \section{Conclusions}
+    
+    In this project, I studied the problem of inverse dynamics, specifically on robotic arms.
+    Using GPR, I was able to generate predictions for the functions of each torque variable
+    of the arm using the position, velocity, and acceleration of each joint. It was found that
+    GPR was better able to predict joints further from the base of the robot; future analysis
+    could be performed in an attempt to provide predictions that generate a lower MSE for the
+    earlier torques, possibly by defining a custom kernel for them or altering how the
+    hyperparameters are optimized.
+    
+    \clearpage
+    \renewcommand*{\bibfont}{\raggedright}
+    \bibliography{analysis-results}
+    \bibliographystyle{iclr2025_conference}
+    
+    \clearpage
+    \section{Appendix}
+    \label{sec:appendix}
+    
+    When transforming coordinate systems between different joints on a robotic arm, what ends up
+    occuring is a series of rotations and translations. Transformations of this nature on a
+    coordinate system are considered homogeneous transformations. Given points
+    $P_{0}, P_{1} \in \mathbb{R}^{3}$ where $P{0}$ is being transformed into $P_{1}$, one can
+    express rotations and translations as matrix multiplication on the points, shown below:
+    
+    \begin{align*}
+        P_{0} = A_{\text{Rot, }x\text{, } \theta} P_{1} =
+        \begin{bmatrix}
+            1 & 0            &  0            & 0 \\
+            0 & \cos(\theta) & -\sin(\theta) & 0 \\
+            0 & \sin(\theta) &  \cos(\theta) & 0 \\
+            0 & 0            &  0            & 1
+        \end{bmatrix} \qquad
+        P_{0} &= A_{\text{Trans, }x\text{, } d} P_{1} =
+        \begin{bmatrix}
+            1 & 0 & 0 & d \\
+            0 & 1 & 0 & 0 \\
+            0 & 0 & 1 & 0 \\
+            0 & 0 & 0 & 1
+        \end{bmatrix} \\
+        P_{0} = A_{\text{Rot, }y\text{, } \theta} P_{1} =
+        \begin{bmatrix}
+             \cos(\theta) & 0 & \sin(\theta) & 0 \\
+             0            & 1 & 0            & 0 \\
+            -\sin(\theta) & 0 & \cos(\theta) & 0 \\
+             0            & 0 & 0            & 1
+        \end{bmatrix} \qquad
+        P_{0} &= A_{\text{Trans, }y\text{, } d} P_{1} =
+        \begin{bmatrix}
+            1 & 0 & 0 & 0 \\
+            0 & 1 & 0 & d \\
+            0 & 0 & 1 & 0 \\
+            0 & 0 & 0 & 1
+        \end{bmatrix} \\
+        P_{0} = A_{\text{Rot, }z\text{, } \theta} P_{1} =
+        \begin{bmatrix}
+            \cos(\theta) & -\sin(\theta) & 0 & 0 \\
+            \sin(\theta) &  \cos(\theta) & 0 & 0 \\
+            0            & 0             & 0 & 0 \\
+            0            & 0             & 0 & 1
+        \end{bmatrix} \qquad
+        P_{0} &= A_{\text{Trans, }z\text{, } d} P_{1} =
+        \begin{bmatrix}
+            1 & 0 & 0 & 0 \\
+            0 & 1 & 0 & 0 \\
+            0 & 0 & 1 & d \\
+            0 & 0 & 0 & 1
+        \end{bmatrix}
+    \end{align*}
+    
+    Additionally, there exists a procedure for defining the forward kinematics of a robotic arm
+    called the Denavit-Hartenburg (DH) Procedure. In it, the following transformation is used
+    when transforming between coordinate systems of the different robotic links
+    (joint $i - 1$ to $i$):
+    
+    \begin{align*}
+        A_{i - 1}^{i} &= A_{\text{Rot, }z_{i - 1}\text{, } \theta_{i}} A_{\text{Trans, }z_{i - 1}\text{, } d_{i}} A_{\text{Trans, }x_{i}\text{, } a_{i}} A_{\text{Rot, }x_{i}\text{, } \alpha_{i}} \\
+                      &=
+        \begin{bmatrix}
+            \cos \theta_{i} & -\cos \alpha_{i} \sin \theta_{i} &  \sin \alpha_{i} \sin \theta_{i} & a_{i} \cos \theta_{i} \\
+            \sin \theta_{i} &  \cos \alpha_{i} \cos \theta_{i} & -\sin \alpha_{i} \cos \theta_{i} & a_{i} \sin \theta_{i} \\
+            0               &  \sin \alpha_{i}                 &  \cos \alpha_{i}                 & d_{i}                 \\
+            0               &  0                               &  0                               & 1
+        \end{bmatrix}
+    \end{align*}
+    
+    where $\theta_{i}$, $d_{i}$ are possible joint variables. Additionally, their exists a nice
+    property relating different joint coordinate systems to each other. Say we have a $n$ joint
+    robotic arm and $0 \leq j < k \leq n$. Then the transformation matrix starting at link $j$ and
+    going to link $m$ is given by:
+    
+    \begin{align*}
+        A_{j}^{k} = A_{j}^{j + 1} A_{j + 1}^{j + 2} \cdot A_{k - 2}^{k - 1} A_{k - 1}^{k}
+    \end{align*}
+    
+    This means when transforming from our base coordinate to the end effector frame (end point
+    on the robot where a robotic gripper / arm is often located), we have:
+    
+    \begin{align*}
+        A_{0}^{n} = A_{0}^{1} A_{1}^{2} \cdot A_{n - 2}^{n - 1} A_{n - 1}^{n}
+    \end{align*}
+    
+    Additionally, we can obtain information about the end effector coordinate system and location
+    relative to the base coordinate system via the transformation matrix. If end effector
+    coordinate basis vectors are denoted as $\textbf{x}$, $\textbf{y}$, $\textbf{z}$, and the
+    end effector gripper location is $\textbf{p}$, then:
+    
+    \begin{align*}
+        A_{0}^{n} =
+        \begin{bmatrix}
+            \textbf{x} & \textbf{y} & \textbf{z} & \textbf{p} \\
+            0          & 0          & 0          & 1
+        \end{bmatrix}
+    \end{align*}
+    
+    From the way that the DH matrices are composed, alongside their relationship to the end
+    effector coordinate system, it is clear to see that the system will be highly non-linear,
+    especially as more rotational joints (joints with $\theta_{i}$ as the joint variable) are
+    included in the system.
+
+\end{document}
