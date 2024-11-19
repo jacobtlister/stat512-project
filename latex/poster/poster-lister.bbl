@@ -1,0 +1,25 @@
+\begin{thebibliography}{1}
+
+\bibitem{gpml}
+C.~Rasmussen and C.~Williams, {\em Guassian Processes for Machine Learning}.
+\newblock MIT Press, 2006.
+
+\bibitem{scikit-gp}
+scikit\nobreakhyphen learn, ``1.7. guassian processes.''
+
+\bibitem{sarcos}
+C.~Rasmussen and C.~Williams, ``Guassian processes for machine learning -
+  data,'' 2006.
+
+\bibitem{github}
+J.~Lister.
+
+\bibitem{fic}
+J.~Qui{{\~n}}onero-Candela and C.~E. Rasmussen, ``A unifying view of sparse
+  approximate gaussian process regression,'' {\em Journal of Machine Learning
+  Research}, vol.~6, no.~65, pp.~1939--1959, 2005.
+
+\bibitem{fic_matlab}
+``Fully independent conditional approximation for gpr models.''
+
+\end{thebibliography}

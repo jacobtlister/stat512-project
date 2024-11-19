@@ -1,0 +1,320 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Jacobs Landscape Poster
+% LaTeX Template
+% Version 1.0 (29/03/13)
+%
+% Created by:
+% Computational Physics and Biophysics Group, Jacobs University
+% https://teamwork.jacobs-university.de:8443/confluence/display/CoPandBiG/LaTeX+Poster
+%
+% Further modified by:
+% Nathaniel Johnston (nathaniel@njohnston.ca)
+%
+% This template has been downloaded from:
+% https://www.overleaf.com/latex/templates/landscape-beamer-poster-template/vjpmsxxdvtqk
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[final]{beamer}
+
+\usepackage[scale=1.24]{beamerposter} % Use the beamerposter package for laying out the poster
+
+\usetheme{confposter} % Use the confposter theme supplied with this template
+
+\setbeamercolor{block title}{fg=ngreen,bg=white} % Colors of the block titles
+\setbeamercolor{block body}{fg=black,bg=white} % Colors of the body of blocks
+\setbeamercolor{block alerted title}{fg=white,bg=dblue!70} % Colors of the highlighted block titles
+\setbeamercolor{block alerted body}{fg=black,bg=dblue!10} % Colors of the body of highlighted blocks
+% Many more colors are available for use in beamerthemeconfposter.sty
+
+% to allow hyphens to appear in the author names of those cited
+% https://latex.org/forum/viewtopic.php?t=3584#top
+% the post from phi detailed the solution i used
+% to insert a hyphen in the name of an author, instead
+% of typing a -, type \nobreakhyphen
+\makeatletter
+\newcommand*\nobreakhyphen{\hbox{-}\nobreak\hskip\z@skip}
+\makeatother
+
+% a shortcut for a spaced out vertical bar
+\newcommand{\vbar}{\hspace{-0.4mm} \mathrel{|} \hspace{-0.4mm}}
+
+%-----------------------------------------------------------
+% Define the column widths and overall poster size
+% To set effective sepwid, onecolwid and twocolwid values, first choose how many columns you want and how much separation you want between columns
+% In this template, the separation width chosen is 0.024 of the paper width and a 4-column layout
+% onecolwid should therefore be (1-(# of columns+1)*sepwid)/# of columns e.g. (1-(4+1)*0.024)/4 = 0.22
+% Set twocolwid to be (2*onecolwid)+sepwid = 0.464
+% Set threecolwid to be (3*onecolwid)+2*sepwid = 0.708
+
+\newlength{\sepwid}
+\newlength{\onecolwid}
+\newlength{\twocolwid}
+\newlength{\threecolwid}
+\setlength{\paperwidth}{48in} % A0 width: 46.8in
+\setlength{\paperheight}{36in} % A0 height: 33.1in
+\setlength{\sepwid}{0.024\paperwidth} % Separation width (white space) between columns
+\setlength{\onecolwid}{0.22\paperwidth} % Width of one column
+\setlength{\twocolwid}{0.464\paperwidth} % Width of two columns
+\setlength{\threecolwid}{0.708\paperwidth} % Width of three columns
+\setlength{\topmargin}{-0.5in} % Reduce the top margin size
+%-----------------------------------------------------------
+
+\usepackage{graphicx}  % Required for including images
+
+\usepackage{booktabs} % Top and bottom rules for tables
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\title{Guassian Processes/Robot Arm Dynamics} % Poster title
+
+\author{Jacob Lister} % Author(s)
+
+\institute{Department of Electrical and Computer Engineering\\Department of Mathematical Sciences\\Purdue Fort Wayne} % Institution(s)
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\addtobeamertemplate{block end}{}{\vspace*{2ex}} % White space under blocks
+\addtobeamertemplate{block alerted end}{}{\vspace*{2ex}} % White space under highlighted (alert) blocks
+
+\setlength{\belowcaptionskip}{2ex} % White space under figures
+\setlength\belowdisplayshortskip{2ex} % White space under equations
+
+\begin{frame}[t] % The whole poster is enclosed in one beamer frame
+
+\begin{columns}[t] % The whole poster consists of three major columns, the second of which is split into two columns twice - the [t] option aligns each column's content to the top
+
+\begin{column}{\sepwid}\end{column} % Empty spacer column
+
+\begin{column}{\onecolwid} % The first column
+
+%----------------------------------------------------------------------------------------
+%	INTRODUCTION
+%----------------------------------------------------------------------------------------
+
+\begin{block}{Introduction}
+
+    Inverse dynamics is used when working to model joint movement, often of a robotic arm or
+    the arms and legs of an animal or person. This technique is used to determine the torque
+    being applied to the joints in a system based on the position, velocity, and accelation of
+    a body (or end effector in the case of a robotic arm). Using inverse dynamics, you can
+    compute the torques needed to follow a certain trajectory, which provides the ability to
+    simulate biological models or allows robotic arms to "plan" the path they will take when
+    moving from one position to another.
+
+    The specific system I am looking at is that of a SARCOS robotic arm. This arm has 7 joints,
+    which means 7 torques to find. Additionally, this means that there are 7 positions, velocities,
+    and accelerations as outputs. Because I was working with inverse dynamics, the positions,
+    velocities, and accelerations will be used as inputs, and the torques will be used as outputs.
+    This means I will be creating a mapping of 21 inputs of 7 outputs.
+
+    Inverse dynamics can be performed in a variety of ways. The most straight-forward way is to
+    analytically compute the torque functions of each joint in the system. This method requires
+    full knowledge of the system and often becomes extremely complicated for many-jointed systems,
+    so this method cannot always be used. There are also methods of estimating the torques using
+    statistical methods. Due to the fact that the composition of torque functions is of
+    trigonometric functions mainly, these functions end up being highly non-linear. Due to the
+    non-linearity of the torques, simple statistic methods such as linear regression are expected
+    to perform poorly. Guassian Processes Regression is a more robust statistical method and will
+    be the focus of this work. Guassian Processes Regression was used to model the torques of the
+    SARCOS arm given the 21 inputs.
+
+\end{block}
+
+%----------------------------------------------------------------------------------------
+
+\end{column} % End of the first column
+
+\begin{column}{\sepwid}\end{column} % Empty spacer column
+
+
+\begin{column}{\twocolwid} % Begin a column which is two columns wide (column 2)
+\begin{columns}[t,totalwidth=\twocolwid] % Split up the two columns wide column
+
+\begin{column}{\onecolwid}\vspace{-.6in} % The first column within column 2 (column 2.1)
+
+%----------------------------------------------------------------------------------------
+%	METHODS
+%----------------------------------------------------------------------------------------
+
+\begin{block}{GPR}
+
+    To estimate the torque functions of the SARCOS arm, I used a Guassian Processes Regression
+    (GPR). GPR is a technique used in machine learning and more broadly in statistics. It is often
+    used a supervised learning technique when working with non-linear systems. Because
+    Guassian Processes (GPs) can interpreted as a distribution over a function space
+    we can use them to create a more robust method of regression. Because of
+    the fact that the dataset I am working with is large, having over 40,000 samples, an
+    approximation method for GPR will be used.
+
+    Now for an in-depth explanation of GPR. If we interpret a GP as being a distribution over
+    a function space, we can write it as:\vspace{-1.25cm}
+
+    \begin{align*}
+        f(\textbf{x})                             &\sim \mathcal{GP}(m(\textbf{x}), k(\textbf{x}, \textbf{x}')) \\
+        \mathbb{E}[f(\textbf{x})]                 &= m(\textbf{x})                                           \\
+        \text{cov}[f(\textbf{x}), f(\textbf{x}')] &= k(\textbf{x}, \textbf{x}')
+    \end{align*}
+
+    where $\textbf{x}$, $\textbf{x}'$ are 2 points chosen from the set of possible inputs. Then,
+    if we have a number of input points $X_{*}$, we can generate a random Guassian vector
+    $\textbf{f}_{*} = f(\textbf{x}_{*}) \sim \mathcal{N}(0, K(X_{*}, X_{*}))$, where $K$ is the
+    covariances matrix between the different inputs. This becomes the prior for the function
+    we are trying to approximate. If we take into account noise and condition the prior on the
+    observations (training data), we have:\vspace{-1.25cm}
+
+    \begin{align*}
+        \textbf{f}_{*} & \vbar X_{*}, X, \textbf{f} \sim \mathcal{N}(K(X_{*}, X)K(X, X)^{-1} \textbf{f}, \\
+                       & K(X_{*}, X_{*}) - K(X_{*}, X)K(X, X)^{-1} K(X, X_{*}))
+    \end{align*}
+
+    This means that by evaluating the mean and covariance matrices above, the function values
+    $\textbf{f}_{*}$ corresponding to the inputs $X_{*}$ can be sampled from the posterior
+    distribution to estimate $f(\textbf{x})$. This provides the main basis for GPR.
+
+\end{block}
+
+%----------------------------------------------------------------------------------------
+
+\end{column} % End of column 2.1
+
+\begin{column}{\onecolwid}\vspace{-.6in} % The second column within column 2 (column 2.2)
+
+%----------------------------------------------------------------------------------------
+%	METHODS
+%----------------------------------------------------------------------------------------
+
+\begin{block}{FIC Approximation}
+
+    The approximation method for GPR I used was the Fully Independent Conditional (FIC)
+    Approximation. This approximation method modfies the SoR method
+    in a way that avoids the degeneracy problem as in the SoR
+    method, so it is operating on a GP still. In FIC, only a subset of the full dataset is used,
+    and depending on the data being inputted into the kernel, it may either be approximated or
+    calculated exactly. The kernel for the FIC approximation is shown below:\vspace{-1.25cm}
+
+    \begin{align*}
+        \widehat{k}_{\text{FIC}}(x_{i}, x_{j} \vbar \theta, A) &= (1 - \delta_{ij})\widehat{k}_{\text{SR}}(x_{i}, x_{j} \vbar \theta, A) \\
+                                                               &\mathrel{\phantom{=}} + \delta_{ij} k(x_{i}, x_{j} \vbar \theta, A)
+    \end{align*}
+
+    As seen above, the kernel is approximated when the $i \neq j$, which is equivalent to the
+    SoR method, and calculated exactly when $i = j$. The FIC
+    approximation of the $K(X, X \vbar \theta, A)$ matrix is given as:\vspace{-1.25cm}
+
+    \begin{align*}
+        \widehat{K}_{\text{FIC}}(X, X  \vbar \theta, A) &= \widehat{K}_{\text{SR}}(X, X  \vbar \theta, A) \\
+                                                        &\mathrel{\phantom{=}}+ \delta_{ij}(k(x_{i}, x_{j} \vbar \theta, A))
+    \end{align*}
+
+    This method was chosen over the other approximation methods for a number
+    of reasons.
+    This method was chosen over the SoR Method due to FIC being a direct
+    improvement to it, as it has the same computational complexity as the SoR while fixing the
+    issue with the degeneracy of the covariance matrix.
+    The PP Approximation was not used due to reasons mentioned earlier, and the
+    BCM Method was not chosen due to it's higher computational complexity
+    for similar performance. The last method that was not chosen was the SoD method,
+    and while it does have the same computational complexity, it is based on a degenerate GP, so I
+    chose FIC over it for the same reasons as SoR. Overall, the FIC Approximation
+    provided a strong middle ground of the different approximation methods, leading to it being
+    chosen.
+
+\end{block}
+
+%----------------------------------------------------------------------------------------
+
+\end{column} % End of column 2.2
+
+\end{columns} % End of the split of column 2 - any content after this will now take up 2 columns width
+
+%----------------------------------------------------------------------------------------
+
+\begin{columns}[t,totalwidth=\twocolwid] % Split up the two columns wide column again
+
+\begin{column}{\onecolwid} % The first column within column 2 (column 2.1)
+
+%----------------------------------------------------------------------------------------
+
+\end{column} % End of column 2.1
+
+\end{columns} % End of the split of column 2
+
+\end{column} % End of the second column
+
+\begin{column}{\sepwid}\end{column} % Empty spacer column
+
+\begin{column}{\onecolwid} % The third column
+
+%----------------------------------------------------------------------------------------
+%	CONCLUSION
+%----------------------------------------------------------------------------------------
+
+\begin{block}{Analysis and Results}
+
+    Overall, as the model progressed through the joint torques the MSE substantially decreased.
+    This could possibly be due to the fact that earlier joints in the system (assuming earlier
+    indexed joint variables are closer to the base as is standard) have a more dramatic effect
+    on the location of the end effector, as small changes in $q_{1}$ or $q_{2}$ could cause large
+    changes in the position, velocity, and acceleration of the arm, especially if the arm is
+    large. The extremely low MSE for the later joints indicates that GPR performed well in terms
+    of predicting their respective torque functions. It is possible that if I were to
+    fine-tune the optimization of the hyperparemeters or define custom kernels
+    that I could have achieved better performance on the earlier joint torques. Overall, the GPR
+    seems to be able to well predict the torque variables for the SARCOS robotic arm.
+
+    \begin{table}
+        \caption{Details the MSE, kernel function, and basis function for
+        each torque variable (denoted $q_{i}$) estimated.}
+        \vspace*{1mm}
+        \begin{tabular}{cccc}
+            \midrule
+            \midrule
+            $i$ & MSE for predicted $q_{i}$ & $q_{i}$ Kernel & $q_{i}$ Basis  \\
+            \midrule
+            1   & 12.7200                   & R. Quad.    & Pure Quad.        \\
+            2   &  5.0697                   & Matern52    & Constant          \\
+            3   &  1.3051                   & Matern52    & Linear            \\
+            4   &  0.8692                   & Matern32    & Quad.             \\
+            5   &  0.0271                   & Exponential & None              \\
+            6   &  0.3276                   & R. Quad.    & Pure Quad.        \\
+            7   &  0.0962                   & R. Quad.    & Pure Quad.        \\
+            \midrule
+            \midrule
+        \end{tabular}
+        \label{table:table1}
+    \end{table}\vspace{-1.25cm}
+
+\end{block}
+
+\begin{block}{Conclusion}
+
+    Using GPR, I was able to predict the functions of each torque
+    of the arm using the position, velocity, and acceleration of each joint. GPR was better able
+    to predict joints further from the base of the robot; future analysis
+    could be performed in an attempt to provide stronger predictions for the
+    earlier torques, possibly by defining a custom kernel for them or altering how the
+    hyperparameters are optimized.
+
+\end{block}
+
+%----------------------------------------------------------------------------------------
+
+\end{column} % End of the third column
+
+\end{columns} % End of all the columns in the poster
+
+\end{frame} % End of the enclosing frame
+
+\end{document}

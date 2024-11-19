@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99d (TeX Live 2022/dev/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: poster-lister.aux
+The style file: ieeetr.bst
+Database file #1: poster.bib
+You've used 6 entries,
+            1876 wiz_defined-function locations,
+            501 strings with 3972 characters,
+and the built_in function-call counts, 1000 in all, are:
+= -- 91
+> -- 33
+< -- 0
++ -- 14
+- -- 8
+* -- 45
+:= -- 136
+add.period$ -- 5
+call.type$ -- 6
+change.case$ -- 4
+chr.to.int$ -- 0
+cite$ -- 6
+duplicate$ -- 44
+empty$ -- 123
+format.name$ -- 8
+if$ -- 251
+int.to.chr$ -- 0
+int.to.str$ -- 6
+missing$ -- 3
+newline$ -- 22
+num.names$ -- 5
+pop$ -- 28
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 49
+stack$ -- 0
+substring$ -- 40
+swap$ -- 12
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 0
+while$ -- 8
+width$ -- 7
+write$ -- 45
