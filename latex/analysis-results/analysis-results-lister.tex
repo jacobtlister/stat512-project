@@ -77,7 +77,7 @@ Fort Wayne, IN 46805, USA                          \\
         In this work, I analyze the inverse dynamics model of a SARCOS seven joint robotic arm.
         The technique that was used to perform this analysis was Guassian Processes Regression,
         as the functions that dictate the movement of robotic arms are complex and almost always
-        non-linear. In addition, the Fully Independent Conditional Approximation will be used
+        non-linear. In addition, the Fully Independent Conditional Approximation was used
         due to the large size of the dataset.
     \end{abstract}
 
@@ -147,9 +147,9 @@ Fort Wayne, IN 46805, USA                          \\
     
     \subsection{Guassian Processes Regression}
     
-    To estimate the torque functions of the SARCOS arm, I will use a Guassian Processes Regression
+    To estimate the torque functions of the SARCOS arm, I used a Guassian Processes Regression
     (GPR). GPR is a technique used in machine learning and more broadly in statistics. It is often
-    used a supervised learning learning technique when working with non-linear systems. Because
+    used a supervised learning technique when working with non-linear systems. Because
     Guassian Processes (GPs) can interpreted as a distribution over a function space \citep{gpml},
     we can use them to create a more robust method of regression. There are some additional
     advantages to working with guassian processes \citep{scikit-gp}, some of which are detailed
@@ -190,7 +190,7 @@ Fort Wayne, IN 46805, USA                          \\
     
     This means that by evaluating the mean and covariance matrices above, the function values
     $\textbf{f}_{*}$ corresponding to the inputs $X_{*}$ can be sampled from the posterior
-    distribution to estimate $f(\textbf(x))$ \citep{gpml}. This provides the main basis for GPR.
+    distribution to estimate $f(\textbf{x})$ \citep{gpml}. This provides the main basis for GPR.
     
     \subsection{Fully Independent Conditional Approximation}
     
